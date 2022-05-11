@@ -14,6 +14,8 @@ import { getFormatedTime } from "../helper";
 import useStateContext from "../hooks/useStateContext";
 import { green } from "@mui/material/colors";
 import Answer from "./Answer";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db, auth, storage } from "../firebase";
 
 export default function Result() {
   const { context, setContext } = useStateContext();
@@ -53,22 +55,37 @@ export default function Result() {
     navigate("/quiz");
   };
 
-  const submitScore = () => {
-    createAPIEndpoint(ENDPOINTS.participant)
-      .put(context.participantId, {
+  const submitScore = async () => {
+    // createAPIEndpoint(ENDPOINTS.participant)
+    //   .put(context.participantId, {
+    //     participantId: context.participantId,
+    //     score: score,
+    //     timeTaken: context.timeTaken,
+    //   })
+    //   .then((res) => {
+    //     setShowAlert(true);
+    //     setTimeout(() => {
+    //       setShowAlert(false);
+    //     }, 4000);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    try {
+      await setDoc(doc(db, "Score", context.participantId), {
         participantId: context.participantId,
         score: score,
         timeTaken: context.timeTaken,
-      })
-      .then((res) => {
-        setShowAlert(true);
-        setTimeout(() => {
-          setShowAlert(false);
-        }, 4000);
-      })
-      .catch((err) => {
-        console.log(err);
+        timeStamp: serverTimestamp(),
       });
+
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
