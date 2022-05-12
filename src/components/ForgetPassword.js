@@ -5,24 +5,21 @@ import {
   Card,
   CardContent,
   Typography,
-  InputAdornment,
-  IconButton,
   Alert,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import {
-  createUserWithEmailAndPassword,
+
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "../firebase";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useStateContext from "../hooks/useStateContext";
 import Center from "./Center";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const ForgetPassword = () => {
   const { resetContext } = useStateContext();
-  const navigate = useNavigate();
+
 
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
@@ -96,7 +93,7 @@ const ForgetPassword = () => {
                 size="large"
                 sx={{ width: "90%", marginBottom: "10px" }}
               >
-                Login
+                Reset Password
               </Button>
               {/* {JSON.stringify(user, null, 2)} */}
             </form>

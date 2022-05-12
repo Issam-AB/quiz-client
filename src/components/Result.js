@@ -113,11 +113,12 @@ export default function Result() {
               Re-try
             </Button>
             <Alert
+              variant="outlined"
               severity="success"
-              variant="string"
               sx={{
-                width: "60%",
+                width: "53%",
                 m: "auto",
+                mt: "1rem",
                 visibility: showAlert ? "visible" : "hidden",
               }}
             >

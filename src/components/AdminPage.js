@@ -6,10 +6,18 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import Center from "./Center";
+import PopupCategory from "./PopupCategory";
 
 const AdminPage = () => {
+  const [open, setOpen] = useState(false);
+  const handleClick = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <Center>
       <Card sx={{ width: "800px" }}>
@@ -29,9 +37,18 @@ const AdminPage = () => {
               orientation="vertical"
               aria-label="vertical outlined button group"
             >
-              <Button sx={{ my: "12px" }} variant="contained" disableElevation>
-                Create a test
-              </Button>
+              <Box>
+                <Button
+                  sx={{ my: "12px" }}
+                  fullWidth
+                  variant="contained"
+                  disableElevation
+                  onClick={handleClick}
+                >
+                  Create a test
+                </Button>
+                {open && <PopupCategory openForm={open} close={handleClose} />}
+              </Box>
               <Button sx={{ my: "12px" }} variant="contained" disableElevation>
                 Visualize the created test
               </Button>{" "}
