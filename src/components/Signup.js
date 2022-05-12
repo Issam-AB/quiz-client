@@ -10,21 +10,22 @@ import {
   Alert,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import useStateContext from "../hooks/useStateContext";
 import Center from "./Center";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export default function Login() {
-  const { setContext, resetContext } = useStateContext();
+const Signup = () => {
+  const { context, setContext, resetContext } = useStateContext();
   const navigate = useNavigate();
 
   const [error, setError] = useState(false);
   const [user, setUser] = useState({
     email: "",
     password: "",
+    confirmed_password: "",
     showPassword: false,
   });
 
@@ -32,25 +33,21 @@ export default function Login() {
     resetContext();
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    signInWithEmailAndPassword(auth, user.email, user.password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        setContext({ participantId: user.uid, email: user.email });
-        console.log(user.email);
-        if (user.email === "issam.aboulfadl05@gmail.com") {
-          navigate("/admin");
-        } else {
-          navigate("/quiz");
-        }
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        setError(errorMessage);
-      });
+    if (user.password !== user.confirmed_password) {
+      return setError("Passwords do not match");
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, user.email, user.password);
+      setError("");
+      navigate("/");
+    } catch (error) {
+      const errorMessage = error.message;
+      setError(errorMessage);
+    }
   };
 
   const handleClickShowPassword = () => {
@@ -82,10 +79,9 @@ export default function Login() {
                   variant="filled"
                   severity="error"
                 >
-                  Wrong email or password!
+                  {error}
                 </Alert>
               )}
-
               <TextField
                 label="Email"
                 name="email"
@@ -117,7 +113,29 @@ export default function Login() {
                   ),
                 }}
               />
-
+              <TextField
+                label="Confirmed password"
+                name="confirmed_password"
+                type={user.showPassword ? "text" : "password"}
+                variant="outlined"
+                onChange={(e) => {
+                  setUser({ ...user, confirmed_password: e.target.value });
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        // onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {user.showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
               <Button
                 type="submit"
                 variant="contained"
@@ -126,21 +144,19 @@ export default function Login() {
               >
                 Login
               </Button>
-              <Typography variant="subtitle1">
-                <Link style={{ color: "#25CCF7" }} to="/forgot-password">
-                  Forgot Password?
-                </Link>
-              </Typography>
+              {/* {JSON.stringify(user, null, 2)} */}
             </form>
           </Box>
         </CardContent>
       </Card>
       <Box sx={{ width: "100%", textAlign: "center", mt: 2 }}>
-        Need an account?{" "}
-        <Link style={{ color: "#25CCF7" }} to="/signup">
-          Sign Up
+        Already have an account?{" "}
+        <Link style={{ color: "#25CCF7" }} to="/">
+          Log In
         </Link>
       </Box>
     </Center>
   );
-}
+};
+
+export default Signup;

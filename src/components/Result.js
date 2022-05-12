@@ -9,13 +9,12 @@ import {
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { createAPIEndpoint, ENDPOINTS, BASE_URL } from "../api";
 import { getFormatedTime } from "../helper";
 import useStateContext from "../hooks/useStateContext";
 import { green } from "@mui/material/colors";
 import Answer from "./Answer";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db, auth, storage } from "../firebase";
+import { db } from "../firebase";
 
 export default function Result() {
   const { context, setContext } = useStateContext();
@@ -56,21 +55,6 @@ export default function Result() {
   };
 
   const submitScore = async () => {
-    // createAPIEndpoint(ENDPOINTS.participant)
-    //   .put(context.participantId, {
-    //     participantId: context.participantId,
-    //     score: score,
-    //     timeTaken: context.timeTaken,
-    //   })
-    //   .then((res) => {
-    //     setShowAlert(true);
-    //     setTimeout(() => {
-    //       setShowAlert(false);
-    //     }, 4000);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
     try {
       await setDoc(doc(db, "Score", context.participantId), {
         participantId: context.participantId,
