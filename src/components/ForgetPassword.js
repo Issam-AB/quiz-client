@@ -8,10 +8,7 @@ import {
   Alert,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import {
-
-  sendPasswordResetEmail,
-} from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
 import { Link } from "react-router-dom";
 import useStateContext from "../hooks/useStateContext";
@@ -19,7 +16,6 @@ import Center from "./Center";
 
 const ForgetPassword = () => {
   const { resetContext } = useStateContext();
-
 
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");

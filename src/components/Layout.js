@@ -17,7 +17,7 @@ export default function Layout() {
       <AppBar position="sticky">
         <Toolbar sx={{ width: 640, m: "auto" }}>
           <Typography variant="h4" align="center" sx={{ flexGrow: 1 }}>
-            Quiz App
+            EduGen
           </Typography>
           <Button onClick={logout}>Logout</Button>
         </Toolbar>
