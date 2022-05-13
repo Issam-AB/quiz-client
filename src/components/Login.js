@@ -41,7 +41,7 @@ export default function Login() {
         const user = userCredential.user;
         setContext({ participantId: user.uid, email: user.email });
         console.log(user.email);
-        if (user.email === "issam.aboulfadl05@gmail.com") {
+        if (user.email === "admin@admin.com") {
           navigate("/admin");
         } else {
           navigate("/quiz");
