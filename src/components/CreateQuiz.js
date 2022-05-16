@@ -36,8 +36,7 @@ const CreateQuiz = () => {
 	const [age, setAge] = React.useState("");
 	const [expanded, setExpanded] = React.useState("panel2");
 	const [checked, setChecked] = React.useState([0]);
-	const [visualize, setVisualize] = React.useState([]);
-	const [qestion, setQestion] = React.useState([]);
+	const [question, setQuestion] = React.useState([]);
 
 	const handleChange = (event) => {
 		setAge(event.target.value);
@@ -49,6 +48,7 @@ const CreateQuiz = () => {
 	const handleToggle = (value) => () => {
 		const currentIndex = checked.indexOf(value);
 		const newChecked = [...checked];
+		setQuestion([...question, value]);
 
 		if (currentIndex === -1) {
 			newChecked.push(value);
@@ -58,6 +58,9 @@ const CreateQuiz = () => {
 
 		setChecked(newChecked);
 	};
+	// const handleAddItem = () => {
+	//     handleToggle()
+	// };
 
 	return (
 		<Container maxWidth="lg" sx={{ my: "4rem", flexGrow: 1 }}>
@@ -153,7 +156,7 @@ const CreateQuiz = () => {
 											// bgcolor: "background.paper",
 										}}
 									>
-										{[0, 1, 2, 3].map((value) => {
+										{["item0", "item1", "item2", "item3"].map((value) => {
 											const labelId = `checkbox-list-label-${value}`;
 
 											return (
@@ -187,7 +190,7 @@ const CreateQuiz = () => {
 								variant="contained"
 								size="small"
 								color="success"
-								onclick={{}}
+								// onClick={(value) => handleAddItem(value)}
 								sx={{ mt: "2rem", float: "right" }}
 							>
 								ADD
@@ -213,17 +216,16 @@ const CreateQuiz = () => {
 							}}
 							subheader={<li />}
 						>
-							{[0, 1].map((sectionId) => (
-								<li key={`section-${sectionId}`}>
-									<ul>
-										{[0, 1, 2].map((item) => (
-											<ListItem key={`item-${sectionId}-${item}`}>
-												<ListItemText primary={`Item ${item}`} />
+							{question.length !== 0 &&
+								question?.map((question) => (
+									<li key={`section-${question}`}>
+										<ul>
+											<ListItem key={`item-${question}`}>
+												<ListItemText primary={`${question}`} />
 											</ListItem>
-										))}
-									</ul>
-								</li>
-							))}
+										</ul>
+									</li>
+								))}
 						</List>
 					</Item>
 				</Grid>
