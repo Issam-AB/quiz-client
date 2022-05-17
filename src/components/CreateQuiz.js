@@ -23,6 +23,8 @@ import React from "react";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import styled from "@emotion/styled";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -33,34 +35,53 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const CreateQuiz = () => {
-	const [age, setAge] = React.useState("");
+	const [subject, setSubject] = React.useState("");
 	const [expanded, setExpanded] = React.useState("panel2");
-	const [checked, setChecked] = React.useState([0]);
-	const [question, setQuestion] = React.useState([]);
+	const [checked, setChecked] = React.useState([]);
+	const focusPoint = React.useRef(null);
 
 	const handleChange = (event) => {
-		setAge(event.target.value);
+		setSubject(event.target.value);
 	};
 	const handleAccordion = (panel) => (event, newExpanded) => {
 		setExpanded(newExpanded ? panel : false);
 	};
 
-	const handleToggle = (value) => () => {
+	const handleToggle = (value, e) => {
 		const currentIndex = checked.indexOf(value);
-		const newChecked = [...checked];
-		setQuestion([...question, value]);
+		const newChecked = [...checked, { category: "", questionTypes: [] }];
 
 		if (currentIndex === -1) {
-			newChecked.push(value);
+			if (e.currentTarget.getAttribute("role") === "lists") {
+				// newChecked[0].category = "lists";
+				// newChecked[0].questionTypes.push(value);
+				console.log(newChecked[0]);
+			} else if (e.currentTarget.getAttribute("role") === "graphs") {
+				for (const item in newChecked[0]) {
+					item.category = "graphs";
+					item.questionTypes.push(value);
+				}
+				// newChecked[0].category = "graphs";
+				// newChecked[0].questionTypes.push(value);
+				console.log(newChecked[0]);
+			}
 		} else {
 			newChecked.splice(currentIndex, 1);
 		}
 
 		setChecked(newChecked);
 	};
-	// const handleAddItem = () => {
-	//     handleToggle()
-	// };
+	const handleAddItem = async (e) => {
+		e.preventDefault();
+		// await setDoc(doc(db, "quiz", "LA"), {
+		// 	subjectName: subject,
+		// 	questionCategories: [{ category: }],
+		// 	country: "USA",
+		// });
+
+		console.log(checked);
+		console.log(subject);
+	};
 
 	return (
 		<Container maxWidth="lg" sx={{ my: "4rem", flexGrow: 1 }}>
@@ -75,17 +96,20 @@ const CreateQuiz = () => {
 							<Select
 								labelId="demo-select-small"
 								id="demo-select-small"
-								value={age}
+								value={subject}
 								label="Subject"
 								onChange={handleChange}
 							>
-								{/* <MenuItem value="">
-						<em>None</em>
-					</MenuItem> */}
-								<MenuItem value={10}>Data Structure and algorithm</MenuItem>
-								<MenuItem value={20}>Arts & Literature</MenuItem>{" "}
-								<MenuItem value={20}>React js interview</MenuItem>
-								<MenuItem value={30}>Sciences</MenuItem>
+								<MenuItem value={"Data Structure and algorithm"}>
+									Data Structure and algorithm
+								</MenuItem>
+								<MenuItem value={"Arts & Literature"}>
+									Arts & Literature
+								</MenuItem>{" "}
+								<MenuItem value={"React js interview"}>
+									React js interview
+								</MenuItem>
+								<MenuItem value={"Sciences"}>Sciences</MenuItem>
 							</Select>
 						</FormControl>
 						<Box sx={{ flexGrow: 1 }}>
@@ -99,7 +123,7 @@ const CreateQuiz = () => {
 									id="panel1a-header"
 									expanded={true}
 								>
-									<Typography>List</Typography>
+									<Typography>Lists</Typography>
 								</AccordionSummary>
 								<AccordionDetails>
 									<List
@@ -113,8 +137,9 @@ const CreateQuiz = () => {
 											return (
 												<ListItem key={value} disablePadding>
 													<ListItemButton
-														role={undefined}
-														onClick={handleToggle(value)}
+														role="lists"
+														onClick={(e) => handleToggle(value, e)}
+														g
 														dense
 													>
 														<ListItemIcon>
@@ -162,8 +187,8 @@ const CreateQuiz = () => {
 											return (
 												<ListItem key={value} disablePadding>
 													<ListItemButton
-														role={undefined}
-														onClick={handleToggle(value)}
+														role="graphs"
+														onClick={(e) => handleToggle(value, e)}
 														dense
 													>
 														<ListItemIcon>
@@ -190,7 +215,7 @@ const CreateQuiz = () => {
 								variant="contained"
 								size="small"
 								color="success"
-								// onClick={(value) => handleAddItem(value)}
+								onClick={handleAddItem}
 								sx={{ mt: "2rem", float: "right" }}
 							>
 								ADD
@@ -216,9 +241,9 @@ const CreateQuiz = () => {
 							}}
 							subheader={<li />}
 						>
-							{question.length !== 0 &&
-								question?.map((question) => (
-									<li key={`section-${question}`}>
+							{checked.length !== 0 &&
+								checked?.map((question, index) => (
+									<li key={`section-${index}`}>
 										<ul>
 											<ListItem key={`item-${question}`}>
 												<ListItemText primary={`${question}`} />
